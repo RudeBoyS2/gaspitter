@@ -23,8 +23,10 @@ export default extendTheme({
     },
   },
   colors: {
-    primary: "#0a0c09",
-    secondary: "#EE6021",
+    primary: "#E7E9EA",
+    secondary: "#1d9bf0",
+    bg: "#000",
+    border: "#2F3336"
   },
   components: {
     Button: {
