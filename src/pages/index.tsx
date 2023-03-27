@@ -1,9 +1,9 @@
-import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
-import { api, RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import {
   Button,
@@ -13,6 +13,8 @@ import {
   Image,
   Input,
 } from "@chakra-ui/react";
+
+import ChakraNextImage from "~/components/ChakraNextImage";
 
 const CreatePost = () => {
   const { user } = useUser();
@@ -29,13 +31,16 @@ const CreatePost = () => {
       flexDir="column"
     >
       <Flex>
-        <Image
+        <Flex width="10%">
+
+        <ChakraNextImage
           borderRadius="100px"
-          h="14"
-          w="14"
+          height="14"
+          width="14"
           src={user.profileImageUrl}
           alt="profileImage"
-        />
+          />
+          </Flex>
         <Input
           placeholder="Tuiteá tus emojis"
           type="text"
@@ -43,8 +48,8 @@ const CreatePost = () => {
           color="primary"
           border="none"
           size="lg"
-          ml="2"
           _focusVisible={{border: "none"}}
+          w="90%"
         />
       </Flex>
       <Flex justify="flex-end">
@@ -66,6 +71,10 @@ type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 const PostView = (props: PostWithUser) => {
   const { post, author } = props;
 
+  const date = new Date(post.createdAt);
+  const postDate = date.toLocaleTimeString("es-AR", { hour: "numeric", minute: "numeric"})
+  console.log(postDate)
+
   return (
     <Flex
       key={post.id}
@@ -76,9 +85,9 @@ const PostView = (props: PostWithUser) => {
       align="center"
       gap="6"
     >
-      <Image src={author.profileImageUrl} borderRadius="100px" h="14" w="14" alt="Profile image" />
+      <ChakraNextImage src={author.profileImageUrl} borderRadius="100px" height="14" width="14" alt="Profile image" />
       <Flex flexDir="column" gap="2">
-      <Heading as="h4" fontSize="md" color="primary" fontWeight="bold">{author.username}<span style={{marginLeft: "10px", fontWeight: "normal", color: "gray"}}>@{author.username}</span></Heading>
+      <Heading as="h4" fontSize="md" color="primary" fontWeight="bold">{author.username}<span style={{marginLeft: "10px", fontWeight: "normal", color: "gray"}}>@{author.username} - {postDate}</span></Heading>
       {post.content}
       </Flex>
     </Flex>
@@ -88,8 +97,9 @@ const PostView = (props: PostWithUser) => {
 const Home: NextPage = () => {
   const { data, isLoading } = api.posts.getAll.useQuery();
 
-  console.log(data);
   const user = useUser();
+
+  if (!user) return <SignInButton />;
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -108,10 +118,6 @@ const Home: NextPage = () => {
             Inicio
           </Heading>
           {user.isSignedIn && <CreatePost />}
-          {/* <div>
-            {!user.isSignedIn && <SignInButton />}
-          </div>
-          <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" /> */}
           <Flex flexDir="column">
             {data?.map((fullPost) => (
               <PostView {...fullPost} key={fullPost.post.id} />
