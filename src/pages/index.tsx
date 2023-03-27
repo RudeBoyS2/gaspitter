@@ -12,6 +12,7 @@ import {
   Heading,
   Image,
   Input,
+  Spinner,
 } from "@chakra-ui/react";
 
 import ChakraNextImage from "~/components/ChakraNextImage";
@@ -32,15 +33,14 @@ const CreatePost = () => {
     >
       <Flex>
         <Flex width="10%">
-
-        <ChakraNextImage
-          borderRadius="100px"
-          height="14"
-          width="14"
-          src={user.profileImageUrl}
-          alt="profileImage"
+          <ChakraNextImage
+            borderRadius="100px"
+            height="14"
+            width="14"
+            src={user.profileImageUrl}
+            alt="profileImage"
           />
-          </Flex>
+        </Flex>
         <Input
           placeholder="Tuiteá tus emojis"
           type="text"
@@ -48,7 +48,7 @@ const CreatePost = () => {
           color="primary"
           border="none"
           size="lg"
-          _focusVisible={{border: "none"}}
+          _focusVisible={{ border: "none" }}
           w="90%"
         />
       </Flex>
@@ -72,8 +72,11 @@ const PostView = (props: PostWithUser) => {
   const { post, author } = props;
 
   const date = new Date(post.createdAt);
-  const postDate = date.toLocaleTimeString("es-AR", { hour: "numeric", minute: "numeric"})
-  console.log(postDate)
+  const postDate = date.toLocaleTimeString("es-AR", {
+    hour: "numeric",
+    minute: "numeric",
+  });
+  console.log(postDate);
 
   return (
     <Flex
@@ -85,25 +88,56 @@ const PostView = (props: PostWithUser) => {
       align="center"
       gap="6"
     >
-      <ChakraNextImage src={author.profileImageUrl} borderRadius="100px" height="14" width="14" alt="Profile image" />
+      <ChakraNextImage
+        src={author.profileImageUrl}
+        borderRadius="100px"
+        height="14"
+        width="14"
+        alt="Profile image"
+      />
       <Flex flexDir="column" gap="2">
-      <Heading as="h4" fontSize="md" color="primary" fontWeight="bold">{author.username}<span style={{marginLeft: "10px", fontWeight: "normal", color: "gray"}}>@{author.username} - {postDate}</span></Heading>
-      {post.content}
+        <Heading as="h4" fontSize="md" color="primary" fontWeight="bold">
+          {author.username}
+          <span
+            style={{ marginLeft: "10px", fontWeight: "normal", color: "gray" }}
+          >
+            @{author.username} - {postDate}
+          </span>
+        </Heading>
+        {post.content}
       </Flex>
     </Flex>
   );
-}
+};
 
-const Home: NextPage = () => {
+const Feed = () => {
   const { data, isLoading } = api.posts.getAll.useQuery();
 
-  const user = useUser();
+  if (isLoading) return <Flex h="100%" w="100%" justify="center" align="center"><Spinner /></Flex>;
+
+  if (!data) return <Flex h="100%" w="100%" justify="center" align="center">No se encontraron tweets</Flex>
+
+  return (
+    <Flex flexDir="column">
+      {data?.map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id} />
+      ))}
+    </Flex>
+  );
+};
+
+const Home: NextPage = () => {
+  api.posts.getAll.useQuery();
+  const { user, isLoaded, isSignedIn } = useUser();
 
   if (!user) return <SignInButton />;
 
-  if (isLoading) return <div>Loading...</div>;
-
-  if (!data) return <div>Something went wrong</div>;
+  if (!isLoaded)
+    return (
+      <Flex h="100%" w="100%" align="center" justify="center" bg="bg">
+        <Spinner color="primary" size="sm" />
+      </Flex>
+    );
 
   return (
     <>
@@ -117,12 +151,8 @@ const Home: NextPage = () => {
           <Heading as="h2" color="primary" fontSize="2xl" p="3">
             Inicio
           </Heading>
-          {user.isSignedIn && <CreatePost />}
-          <Flex flexDir="column">
-            {data?.map((fullPost) => (
-              <PostView {...fullPost} key={fullPost.post.id} />
-            ))}
-          </Flex>
+          {isSignedIn && <CreatePost />}
+          <Feed />
         </Flex>
       </Container>
     </>
