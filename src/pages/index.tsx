@@ -13,12 +13,24 @@ import {
   Image,
   Input,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
 
 import ChakraNextImage from "~/components/ChakraNextImage";
+import { useState } from "react";
 
 const CreatePost = () => {
+  const [input, setInput] = useState("");
   const { user } = useUser();
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setInput("");
+      void ctx.posts.getAll.invalidate();
+    },
+  });
 
   if (!user) return null;
 
@@ -50,6 +62,9 @@ const CreatePost = () => {
           size="lg"
           _focusVisible={{ border: "none" }}
           w="90%"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          disabled={isPosting}
         />
       </Flex>
       <Flex justify="flex-end">
@@ -59,6 +74,7 @@ const CreatePost = () => {
           borderRadius="2xl"
           _hover={{ bg: "secondary", color: "primary" }}
           _active={{ bg: "secondary", color: "primary" }}
+          onClick={() => mutate({ content: input })}
         >
           Twittear
         </Button>
@@ -76,7 +92,6 @@ const PostView = (props: PostWithUser) => {
     hour: "numeric",
     minute: "numeric",
   });
-  console.log(postDate);
 
   return (
     <Flex
@@ -104,7 +119,9 @@ const PostView = (props: PostWithUser) => {
             @{author.username} - {postDate}
           </span>
         </Heading>
-        {post.content}
+        <Text color="primary" fontSize="xl">
+          {post.content}
+        </Text>
       </Flex>
     </Flex>
   );
@@ -113,13 +130,23 @@ const PostView = (props: PostWithUser) => {
 const Feed = () => {
   const { data, isLoading } = api.posts.getAll.useQuery();
 
-  if (isLoading) return <Flex h="100%" w="100%" justify="center" align="center"><Spinner /></Flex>;
+  if (isLoading)
+    return (
+      <Flex h="100%" w="100%" justify="center" align="center">
+        <Spinner />
+      </Flex>
+    );
 
-  if (!data) return <Flex h="100%" w="100%" justify="center" align="center">No se encontraron tweets</Flex>
+  if (!data)
+    return (
+      <Flex h="100%" w="100%" justify="center" align="center">
+        No se encontraron tweets
+      </Flex>
+    );
 
   return (
     <Flex flexDir="column">
-      {data?.map((fullPost) => (
+      {data.map((fullPost) => (
         <PostView {...fullPost} key={fullPost.post.id} />
       ))}
     </Flex>
