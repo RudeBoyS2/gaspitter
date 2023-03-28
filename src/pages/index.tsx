@@ -14,12 +14,14 @@ import {
   Input,
   Spinner,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 
 import ChakraNextImage from "~/components/ChakraNextImage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const CreatePost = () => {
+  const toast = useToast();
   const [input, setInput] = useState("");
   const { user } = useUser();
 
@@ -30,6 +32,30 @@ const CreatePost = () => {
       setInput("");
       void ctx.posts.getAll.invalidate();
     },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      const errorTooManyRequests = e.data;
+      if (errorMessage && errorMessage[0]) {
+        toast({
+          title: errorMessage[0],
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "bottom",
+        });
+      } else if (errorTooManyRequests) {
+        toast({
+          title:
+            errorTooManyRequests.code === "TOO_MANY_REQUESTS"
+              ? "Solo puedes twittear 3 veces por minuto"
+              : "No se pudo twittear",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+    },
   });
 
   if (!user) return null;
@@ -39,18 +65,20 @@ const CreatePost = () => {
       gap="4"
       borderY="1px solid"
       borderColor="border"
-      p="4"
+      py="4"
+      px="2.5"
       w="100%"
       flexDir="column"
     >
       <Flex>
-        <Flex width="10%">
+        <Flex width={{ base: "20%", md: "10%" }}>
           <ChakraNextImage
             borderRadius="100px"
             height="14"
             width="14"
             src={user.profileImageUrl}
             alt="profileImage"
+            sizes="(max-width: 60px) 100vw"
           />
         </Flex>
         <Input
@@ -75,8 +103,9 @@ const CreatePost = () => {
           _hover={{ bg: "secondary", color: "primary" }}
           _active={{ bg: "secondary", color: "primary" }}
           onClick={() => mutate({ content: input })}
+          disabled={isPosting}
         >
-          Twittear
+          {isPosting ? <Spinner size="sm" /> : "Twittear"}
         </Button>
       </Flex>
     </Flex>
@@ -84,6 +113,7 @@ const CreatePost = () => {
 };
 
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
+
 const PostView = (props: PostWithUser) => {
   const { post, author } = props;
 
@@ -109,6 +139,7 @@ const PostView = (props: PostWithUser) => {
         height="14"
         width="14"
         alt="Profile image"
+        sizes="(max-width: 60px) 100vw"
       />
       <Flex flexDir="column" gap="2">
         <Heading as="h4" fontSize="md" color="primary" fontWeight="bold">

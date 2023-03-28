@@ -9,7 +9,7 @@ import theme from "../theme";
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ChakraProvider theme={theme}>
-      <ClerkProvider {...pageProps}>
+      <ClerkProvider>
         <Component {...pageProps} />
       </ClerkProvider>
     </ChakraProvider>
