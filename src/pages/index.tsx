@@ -1,6 +1,5 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
@@ -19,6 +18,7 @@ import {
 
 import ChakraNextImage from "~/components/ChakraNextImage";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const CreatePost = () => {
   const toast = useToast();
@@ -142,14 +142,23 @@ const PostView = (props: PostWithUser) => {
         sizes="(max-width: 60px) 100vw"
       />
       <Flex flexDir="column" gap="2">
-        <Heading as="h4" fontSize="md" color="primary" fontWeight="bold">
-          {author.username}
-          <span
-            style={{ marginLeft: "10px", fontWeight: "normal", color: "gray" }}
-          >
-            @{author.username} - {postDate}
-          </span>
-        </Heading>
+        <Flex gap="2" align="center">
+          <Link href={`/${author.username}`}>
+            <Heading as="h4" fontSize="md" color="primary" fontWeight="bold">
+              {author.username}
+            </Heading>
+          </Link>
+          <Link href={`/${author.username}`}>
+            <Text fontWeight="normal" color="gray">
+              @{author.username}
+            </Text>
+          </Link>
+          <Link href={`/post/${post.id}`}>
+            <Text fontWeight="normal" color="gray">
+              - {postDate}
+            </Text>
+          </Link>
+        </Flex>
         <Text color="primary" fontSize="xl">
           {post.content}
         </Text>

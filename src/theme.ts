@@ -12,6 +12,10 @@ export default extendTheme({
         height: "100%",
         width: "100%",
       },
+      html: {
+        minHeight: "100vh",
+        bg: "#000",
+      },
       "#__next": {
         height: "100%",
         width: "100%",
