@@ -8,16 +8,19 @@ import {
   Container,
   Flex,
   Heading,
+  Icon,
   Image,
   Input,
   Spinner,
   Text,
   useToast,
 } from "@chakra-ui/react";
+import { BiLogOut } from "react-icons/bi";
 
 import ChakraNextImage from "~/components/ChakraNextImage";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import SideBar from "~/components/SideBar";
 
 const CreatePost = () => {
   const toast = useToast();
@@ -107,7 +110,7 @@ const CreatePost = () => {
           disabled={isPosting}
           minW="90px"
         >
-          {isPosting ? <Spinner size="sm" /> : "Twittear"}
+          {isPosting ? <Spinner size="sm" color="primary" /> : "Twittear"}
         </Button>
       </Flex>
     </Flex>
@@ -161,7 +164,7 @@ const PostView = (props: PostWithUser) => {
         justify="center"
         minH="111px"
       >
-        <Spinner />
+        <Spinner color="primary" size="sm" />
       </Flex>
     );
 
@@ -172,7 +175,6 @@ const PostView = (props: PostWithUser) => {
       py="6"
       borderBottom="1px solid"
       borderColor="border"
-      align="center"
       gap="6"
       position="relative"
     >
@@ -180,7 +182,7 @@ const PostView = (props: PostWithUser) => {
         <Button
           position="absolute"
           right="3"
-          top="7"
+          top="6"
           w="6"
           h="6"
           bg="none"
@@ -235,7 +237,7 @@ const Feed = () => {
   if (isLoading)
     return (
       <Flex minH="200px" w="100%" justify="center" align="center">
-        <Spinner />
+        <Spinner color="primary" size="sm" />
       </Flex>
     );
 
@@ -256,14 +258,13 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
+  const { user } = useUser();
   api.posts.getAll.useQuery();
-
-  if (!user) return <SignInButton />;
 
   if (!isLoaded)
     return (
-      <Flex h="100%" w="100%" align="center" justify="center" bg="bg">
+      <Flex h="100vh" w="100vw" align="center" justify="center" bg="bg">
         <Spinner color="primary" size="sm" />
       </Flex>
     );
@@ -271,13 +272,53 @@ const Home: NextPage = () => {
   return (
     <>
       <Container maxW="container.2xl" h="100%" bg="bg">
-        <Flex flexDir="column" maxW="container.sm" h="100%" m="auto">
-          <Heading as="h2" color="primary" fontSize="2xl" p="3">
-            Inicio
-          </Heading>
-          {isSignedIn && <CreatePost />}
-          <Feed />
-        </Flex>
+        {!isSignedIn ? (
+          <Flex
+            flexDir="column"
+            maxW="container.sm"
+            minH="100vh"
+            m="auto"
+            align="center"
+            justify="center"
+          >
+            <Heading as="h1" color="primary" mb="4">
+              Bienvenido a Gaspitter
+            </Heading>
+            <SignInButton>
+              <Button
+                bg="secondary"
+                _hover={{ bg: "secondary" }}
+                _active={{ bg: "secondary" }}
+                color="primary"
+              >
+                Ingresar
+              </Button>
+            </SignInButton>
+          </Flex>
+        ) : (
+          <>
+          {user?.username && <SideBar username={user?.username} />}
+            <Flex
+              flexDir="column"
+              maxW="container.sm"
+              h="100%"
+              m="auto"
+              position="relative"
+            >
+              <Heading as="h2" color="primary" fontSize="2xl" p="3">
+                Inicio
+              </Heading>
+              <Flex position="absolute" right="2" top="4" cursor="pointer">
+                <SignOutButton>
+                  
+                  <Icon as={BiLogOut} w="6" h="6" />
+                </SignOutButton>
+              </Flex>
+              {isSignedIn && <CreatePost />}
+              <Feed />
+            </Flex>
+          </>
+        )}
       </Container>
     </>
   );
