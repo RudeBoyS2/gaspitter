@@ -23,7 +23,6 @@ const CreatePost = () => {
   const toast = useToast();
   const [input, setInput] = useState("");
   const { user } = useUser();
-  console.log(user)
 
   const ctx = api.useContext();
 
@@ -73,15 +72,15 @@ const CreatePost = () => {
       <Flex>
         <Flex width={{ base: "20%", md: "10%" }}>
           <Link href={`/${user.username || ""}`}>
-          <ChakraNextImage
-            borderRadius="100px"
-            height="14"
-            width="14"
-            src={user.profileImageUrl}
-            alt="profileImage"
-            sizes="(max-width: 60px) 100vw"
+            <ChakraNextImage
+              borderRadius="100px"
+              height="14"
+              width="14"
+              src={user.profileImageUrl}
+              alt="profileImage"
+              sizes="(max-width: 60px) 100vw"
             />
-            </Link>
+          </Link>
         </Flex>
         <Input
           placeholder="Tuiteá tus emojis"
@@ -106,6 +105,7 @@ const CreatePost = () => {
           _active={{ bg: "secondary", color: "primary" }}
           onClick={() => mutate({ content: input })}
           disabled={isPosting}
+          minW="90px"
         >
           {isPosting ? <Spinner size="sm" /> : "Twittear"}
         </Button>
@@ -118,6 +118,7 @@ type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
 const PostView = (props: PostWithUser) => {
   const toast = useToast();
+  const { user } = useUser();
   const { post, author } = props;
   const ctx = api.useContext();
 
@@ -175,21 +176,23 @@ const PostView = (props: PostWithUser) => {
       gap="6"
       position="relative"
     >
-      <Button
-        position="absolute"
-        right="3"
-        top="7"
-        w="6"
-        h="6"
-        bg="none"
-        _hover={{ bg: "none", color: "red" }}
-        _active={{ bg: "none" }}
-        color="primary"
-        onClick={() => mutate(post.id)}
-        disabled={isDeleting}
-      >
-        X
-      </Button>
+      {post.authorId === user?.id && (
+        <Button
+          position="absolute"
+          right="3"
+          top="7"
+          w="6"
+          h="6"
+          bg="none"
+          _hover={{ bg: "none", color: "red" }}
+          _active={{ bg: "none" }}
+          color="primary"
+          onClick={() => mutate(post.id)}
+          disabled={isDeleting}
+        >
+          X
+        </Button>
+      )}
       <Link href={`/${author.username}`}>
         <ChakraNextImage
           src={author.profileImageUrl}
@@ -231,7 +234,7 @@ const Feed = () => {
 
   if (isLoading)
     return (
-      <Flex h="100%" w="100%" justify="center" align="center">
+      <Flex minH="200px" w="100%" justify="center" align="center">
         <Spinner />
       </Flex>
     );
