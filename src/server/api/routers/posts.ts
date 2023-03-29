@@ -1,6 +1,5 @@
 import { privateProcedure } from "./../trpc";
 
-import type { User } from "@clerk/nextjs/dist/api";
 import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -9,14 +8,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-
-const filterUserForClient = (user: User) => {
-  return {
-    id: user.id,
-    username: user.username,
-    profileImageUrl: user.profileImageUrl,
-  };
-};
+import { filterUserForClient } from "~/utils/filterUserForClient";
 
 // rate limiter, 3 requests per minute max
 const ratelimit = new Ratelimit({
@@ -90,5 +82,38 @@ export const postsRouter = createTRPCRouter({
       });
 
       return post;
+    }),
+  delete: privateProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const authorId = ctx.userId;
+      console.log(input)
+      const post = await ctx.prisma.post.findUnique({
+        where: {
+          id: input,
+        },
+      });
+
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+
+      if (post.authorId !== authorId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to delete this post",
+        });
+      }
+
+      await ctx.prisma.post.delete({
+        where: {
+          id: input,
+        },
+      });
+
+      return true;
     }),
 });
