@@ -271,7 +271,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Container maxW="container.2xl" h="100%" bg="bg">
+      <Container maxW="container.2xl" h="100%" bg="bg" position="relative">
         {!isSignedIn ? (
           <Flex
             flexDir="column"
@@ -309,8 +309,7 @@ const Home: NextPage = () => {
                 Inicio
               </Heading>
               <Flex position="absolute" right="2" top="4" cursor="pointer">
-                <SignOutButton>
-                  
+                <SignOutButton>                  
                   <Icon as={BiLogOut} w="6" h="6" />
                 </SignOutButton>
               </Flex>
