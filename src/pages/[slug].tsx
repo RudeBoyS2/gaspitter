@@ -2,14 +2,11 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { Container, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
 import { api } from "~/utils/api";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { appRouter } from "~/server/api/root";
-import { prisma } from "~/server/db";
-import superjson from "superjson";
 import { useUser } from "@clerk/nextjs";
 import ChakraNextImage from "~/components/ChakraNextImage";
 import SideBar from "~/components/SideBar";
 import PostView from "~/components/PostView";
+import { generateSSGHelper } from "~/utils/ssgHelper";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
@@ -123,11 +120,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: { prisma, userId: null },
-    transformer: superjson, // optional - adds superjson serialization
-  });
+  const ssg = generateSSGHelper()
 
   const slug = context.params?.slug;
 

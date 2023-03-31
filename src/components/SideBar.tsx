@@ -2,7 +2,7 @@ import { Button, Flex, Icon } from '@chakra-ui/react'
 import { useRouter } from 'next/router';
 import { BiHomeAlt2, BiUser } from "react-icons/bi";
 
-const SideBar = (user: {username: string}) => {
+const SideBar = (user: {username: string | null}) => {
     const router = useRouter();
     console.log(user.username)
 
@@ -12,6 +12,7 @@ const SideBar = (user: {username: string}) => {
           <Icon as={BiHomeAlt2} mr="2" />
           Inicio
         </Button>
+         {/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */}
         <Button onClick={() => void router.push(`/${user.username}`)} color="primary" size="sm" variant="ghost" fontSize="2xl" w="130px" h="40px" display="flex" _hover={{bg: "gray.700"}} borderRadius="2xl">
         <Icon as={BiUser} mr="3" />
           Perfil 
