@@ -13,6 +13,7 @@ import {
 
 import ChakraNextImage from "~/components/ChakraNextImage";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
@@ -21,6 +22,7 @@ const PostView = (props: PostWithUser) => {
   const { user } = useUser();
   const { post, author } = props;
   const ctx = api.useContext();
+  const router = useRouter();
 
   const date = new Date(post.createdAt);
   const postDate = date.toLocaleTimeString("es-AR", {
@@ -74,6 +76,8 @@ const PostView = (props: PostWithUser) => {
       borderColor="border"
       gap="6"
       position="relative"
+      onClick={() => void router.push(`/post/${post.id}`)}
+      cursor="pointer"
     >
       {post.authorId === user?.id && (
         <Button
@@ -116,11 +120,11 @@ const PostView = (props: PostWithUser) => {
               </Text>
             </Link>
           </Box>
-          <Link href={`/post/${post.id}`}>
+          {/* <Link href={`/post/${post.id}`}> */}
             <Text fontWeight="normal" color="gray">
               - {postDate}
             </Text>
-          </Link>
+          {/* </Link> */}
         </Flex>
         <Text color="primary" fontSize="xl">
           {post.content}
