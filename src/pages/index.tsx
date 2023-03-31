@@ -158,53 +158,56 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Container maxW="container.2xl" h="100%" bg="bg" position="relative">
-        {!isSignedIn ? (
+      <Container
+        maxW="container.2xl"
+        h="100%"
+        bg="bg"
+        position="relative"
+        p="0"
+      >
+        {user?.username && <SideBar username={user?.username} />}
+        <Flex
+          flexDir="column"
+          maxW="container.sm"
+          h="100%"
+          m="auto"
+          position="relative"
+          borderX="1px solid"
+          borderColor="border"
+        >
           <Flex
-            flexDir="column"
-            maxW="container.sm"
-            minH="100vh"
-            m="auto"
             align="center"
-            justify="center"
+            justify="space-between"
+            p="4"
+            borderBottom="1px solid"
+            borderColor="border"
           >
-            <Heading as="h1" color="primary" mb="4">
-              Bienvenido a Gaspitter
+            <Heading as="h2" color="primary" fontSize="2xl">
+              Inicio
             </Heading>
-            <SignInButton>
-              <Button
-                bg="secondary"
-                _hover={{ bg: "secondary" }}
-                _active={{ bg: "secondary" }}
-                color="primary"
-              >
-                Ingresar
-              </Button>
-            </SignInButton>
-          </Flex>
-        ) : (
-          <>
-          {user?.username && <SideBar username={user?.username} />}
-            <Flex
-              flexDir="column"
-              maxW="container.sm"
-              h="100%"
-              m="auto"
-              position="relative"
-            >
-              <Heading as="h2" color="primary" fontSize="2xl" p="3">
-                Inicio
-              </Heading>
-              <Flex position="absolute" right="2" top="4" cursor="pointer">
-                <SignOutButton>                  
-                  <Icon as={BiLogOut} w="6" h="6" />
+            <Flex cursor="pointer">
+              {!isSignedIn ? (
+                <SignInButton>
+                  <Button
+                    bg="secondary"
+                    color="primary"
+                    size="sm"
+                    _hover={{ bg: "secondary", color: "primary" }}
+                    _active={{ bg: "secondary", color:"primary" }}
+                  >
+                    Ingresa a tu cuenta
+                  </Button>
+                </SignInButton>
+              ) : (
+                <SignOutButton>
+                  <Icon as={BiLogOut} w="6" h="6" color="primary" />
                 </SignOutButton>
-              </Flex>
-              {isSignedIn && <CreatePost />}
-              <Feed />
+              )}
             </Flex>
-          </>
-        )}
+          </Flex>
+          {isSignedIn && <CreatePost />}
+          <Feed />
+        </Flex>
       </Container>
     </>
   );

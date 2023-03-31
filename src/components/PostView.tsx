@@ -1,12 +1,11 @@
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
-import {  useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import {
+  Box,
   Button,
-  
   Flex,
   Heading,
-  
   Spinner,
   Text,
   useToast,
@@ -14,8 +13,6 @@ import {
 
 import ChakraNextImage from "~/components/ChakraNextImage";
 import Link from "next/link";
-
-
 
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
@@ -81,8 +78,8 @@ const PostView = (props: PostWithUser) => {
       {post.authorId === user?.id && (
         <Button
           position="absolute"
-          right="3"
-          top="6"
+          right={{ base: "2", md: "3" }}
+          top={{ base: "4", md: "6" }}
           w="6"
           h="6"
           bg="none"
@@ -112,11 +109,13 @@ const PostView = (props: PostWithUser) => {
               {author.username}
             </Heading>
           </Link>
-          <Link href={`/${author.username}`}>
-            <Text fontWeight="normal" color="gray">
-              @{author.username}
-            </Text>
-          </Link>
+          <Box display={{base: "none", md: "block"}}>
+            <Link href={`/${author.username}`}>
+              <Text fontWeight="normal" color="gray">
+                @{author.username}
+              </Text>
+            </Link>
+          </Box>
           <Link href={`/post/${post.id}`}>
             <Text fontWeight="normal" color="gray">
               - {postDate}
