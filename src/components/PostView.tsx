@@ -113,18 +113,16 @@ const PostView = (props: PostWithUser) => {
               {author.username}
             </Heading>
           </Link>
-          <Box display={{base: "none", md: "block"}}>
+          <Box display={{ base: "none", md: "block" }}>
             <Link href={`/${author.username}`}>
               <Text fontWeight="normal" color="gray">
                 @{author.username}
               </Text>
             </Link>
           </Box>
-          {/* <Link href={`/post/${post.id}`}> */}
-            <Text fontWeight="normal" color="gray">
-              - {postDate}
-            </Text>
-          {/* </Link> */}
+          <Text fontWeight="normal" color="gray">
+            - {postDate}
+          </Text>
         </Flex>
         <Text color="primary" fontSize="xl">
           {post.content}
