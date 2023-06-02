@@ -99,7 +99,7 @@ const CreatePost = () => {
           borderRadius="2xl"
           _hover={{ bg: "secondary", color: "primary" }}
           _active={{ bg: "secondary", color: "primary" }}
-          onClick={() => mutate({ content: input, image })}
+          onClick={() => mutate({ content: input || "", image })}
           disabled={isPosting}
           minW="90px"
           fontSize="xl"

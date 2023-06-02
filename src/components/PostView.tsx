@@ -129,11 +129,11 @@ const PostView = (props: PostWithUser) => {
         </Text>
         {post.image && (
           <ChakraNextImage
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             src={post.image}
             alt="Post image"
-            height="14"
-          width="14"
-            sizes="(max-width: 60px) 100vw"
+            height="72"
+            width="72"
           />
         )}
       </Flex>
