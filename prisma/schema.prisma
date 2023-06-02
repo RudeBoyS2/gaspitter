@@ -1,5 +1,5 @@
 // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about it in the docs: https://pris.ly/updad/prisma-schema
 
 datasource db {
   provider = "mysql"
@@ -15,6 +15,7 @@ model Post {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     
+    image String? @db.VarChar(255)
     content String @db.VarChar(255)
     authorId String
 

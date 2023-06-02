@@ -8,7 +8,7 @@
 const config = {
   reactStrictMode: false,
   images: {
-    domains: ['images.clerk.dev'],
+    domains: ['images.clerk.dev', 'res.cloudinary.com'],
   },
 
   /**

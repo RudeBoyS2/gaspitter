@@ -1,10 +1,4 @@
-import {
-  Button,
-  Flex,
-  Input,
-  Spinner,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, Flex, Input, Spinner, useToast } from "@chakra-ui/react";
 
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
@@ -12,10 +6,12 @@ import { useState } from "react";
 import Link from "next/link";
 
 import ChakraNextImage from "~/components/ChakraNextImage";
+import ImageUpload from "./ImageUpload";
 
 const CreatePost = () => {
   const toast = useToast();
   const [input, setInput] = useState("");
+  const [image, setImage] = useState("");
   const { user } = useUser();
 
   const ctx = api.useContext();
@@ -23,6 +19,7 @@ const CreatePost = () => {
   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: () => {
       setInput("");
+      setImage("");
       void ctx.posts.getAll.invalidate();
     },
     onError: (e) => {
@@ -91,15 +88,18 @@ const CreatePost = () => {
           onChange={(e) => setInput(e.target.value)}
           disabled={isPosting}
         />
+
       </Flex>
-      <Flex justify="flex-end">
+      <Flex justify="flex-end" gap="4">
+        <ImageUpload onChange={(value) => setImage(value)} value={image} />
         <Button
+          alignSelf="flex-end"
           bg="secondary"
           color="primary"
           borderRadius="2xl"
           _hover={{ bg: "secondary", color: "primary" }}
           _active={{ bg: "secondary", color: "primary" }}
-          onClick={() => mutate({ content: input })}
+          onClick={() => mutate({ content: input, image })}
           disabled={isPosting}
           minW="90px"
           fontSize="xl"
