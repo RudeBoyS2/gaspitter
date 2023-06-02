@@ -127,6 +127,15 @@ const PostView = (props: PostWithUser) => {
         <Text color="primary" fontSize="xl">
           {post.content}
         </Text>
+        {post.image && (
+          <ChakraNextImage
+            src={post.image}
+            alt="Post image"
+            height="14"
+          width="14"
+            sizes="(max-width: 60px) 100vw"
+          />
+        )}
       </Flex>
     </Flex>
   );

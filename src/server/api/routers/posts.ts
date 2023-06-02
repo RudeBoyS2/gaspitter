@@ -105,6 +105,7 @@ export const postsRouter = createTRPCRouter({
           .emoji("Solo puedes twittear emojis")
           .min(1)
           .max(280),
+        image: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -118,12 +119,13 @@ export const postsRouter = createTRPCRouter({
         });
       }
 
-      const { content } = input;
+      const { content, image } = input;
 
       const post = await ctx.prisma.post.create({
         data: {
           content,
           authorId,
+          image,
         },
       });
 
